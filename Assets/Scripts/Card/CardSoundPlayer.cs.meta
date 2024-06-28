@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: a943e4f8f22572a4c9c17e4ad8c7008d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - _flipSound: {fileID: 8300000, guid: d3343cfff70a7254ca49547313a83dff, type: 3}
+  - _matchSound: {fileID: 8300000, guid: afed50f504a8c48468270ce7633e625a, type: 3}
+  - _mismatchSound: {fileID: 8300000, guid: 7588b81722828264ebfe7cd16443b111, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
