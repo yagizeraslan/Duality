@@ -10,12 +10,12 @@ namespace YagizEraslan.Duality
     {
         [Header("Image References")]
         [SerializeField] private Sprite _backSide;
-        [SerializeField] private Sprite _frontSide;
+        [SerializeField] public Sprite frontSide;
 
         private Image _cardImage;
 
         public Sprite BackSide => _backSide;
-        public Sprite FrontSide => _frontSide;
+        public Sprite FrontSide => frontSide;
         public Image CardImage => _cardImage;
 
         private void Awake()

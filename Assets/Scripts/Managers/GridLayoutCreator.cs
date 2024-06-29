@@ -59,7 +59,7 @@ namespace YagizEraslan.Duality
                 }
             }
 
-            CardChecker.Instance.GetCards();
+            CardManager.Instance.PrepareCards();
         }
     }
 }

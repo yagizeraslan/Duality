@@ -1215,50 +1215,6 @@ MonoBehaviour:
   spacing: 10
   targetArea: {fileID: 1848945384}
   cardPrefab: {fileID: 7764365684298558361, guid: 6371073f9e9b40f428c9c14de23cf4c1, type: 3}
---- !u!1 &372179359
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 372179360}
-  - component: {fileID: 372179361}
-  m_Layer: 0
-  m_Name: ScoreManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &372179360
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 372179359}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 12
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &372179361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 372179359}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28ebda5992d3c0048b46fcfefb3a10b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &381917163
 GameObject:
   m_ObjectHideFlags: 0
@@ -1947,8 +1903,8 @@ RectTransform:
   m_GameObject: {fileID: 608542371}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.1, y: 1.1, z: 1.1}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 583839114}
   m_RootOrder: 0
@@ -1971,7 +1927,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.4811321, g: 0.47259542, b: 0.38808295, a: 1}
+  m_Color: {r: 0.2287736, g: 0.5, b: 0.49752176, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1980,7 +1936,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -4370,7 +4326,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1225057921
 GameObject:
@@ -5879,6 +5835,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2377f285011300449be5090fb25eb4e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cardImages:
+  - {fileID: 21300000, guid: 41f5d376e79b62d43b3280cb512ecbb8, type: 3}
+  - {fileID: 21300000, guid: 547537f34cd55344a8b84168299856fe, type: 3}
+  - {fileID: 21300000, guid: a1738141b29de9a4b9d204eeebd6d687, type: 3}
+  - {fileID: 21300000, guid: 94276dfabfe243244a35e3e0832fe873, type: 3}
+  - {fileID: 21300000, guid: 548d1616307102a48b4e6f834c79f7d7, type: 3}
+  - {fileID: 21300000, guid: 1d8caf99a9937e6418388548ca102307, type: 3}
+  - {fileID: 21300000, guid: d134bb3a139c34a4e9b5539c4722ab03, type: 3}
+  - {fileID: 21300000, guid: a8e84a7d836e44349ae15504c21a1d9e, type: 3}
+  - {fileID: 21300000, guid: 1fbda128738168a44ae80c364d53362d, type: 3}
+  - {fileID: 21300000, guid: 0433e8c5cddb16845b4ee9e0e121d584, type: 3}
+  - {fileID: 21300000, guid: 704962d38508ead488d7bff6fb9a0051, type: 3}
+  - {fileID: 21300000, guid: 3b01700282666d3498d886a151a692b5, type: 3}
+  - {fileID: 21300000, guid: a558bdedeefa61e4c8a20be1a3268602, type: 3}
+  - {fileID: 21300000, guid: 41fdb4872907d494e91231b5eed63012, type: 3}
+  - {fileID: 21300000, guid: 1716d9c9888ff2346b95c67453d40887, type: 3}
 --- !u!1 &1862327691
 GameObject:
   m_ObjectHideFlags: 0
@@ -6277,7 +6249,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2025172942
 GameObject:
