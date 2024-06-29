@@ -7,7 +7,7 @@ namespace YagizEraslan.Duality
     {
         private float _flipDuration = 0.25f;
         private bool _isFlipping = false;
-        private bool _isShowingFront = true;
+        private bool _isShowingFront = false;
         private Card _card;
         private CardSoundPlayer _soundPlayer;
 
@@ -32,7 +32,7 @@ namespace YagizEraslan.Duality
 
             yield return ScaleOverTime(1f, 0f, _flipDuration / 2);
 
-            _card.SetSprite(_isShowingFront ? _card.FrontSide : _card.BackSide);
+            _card.SetSprite(!_isShowingFront ? _card.FrontSide : _card.BackSide);
 
             yield return ScaleOverTime(0f, 1f, _flipDuration / 2);
 
