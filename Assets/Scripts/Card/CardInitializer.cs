@@ -6,7 +6,7 @@ namespace YagizEraslan.Duality
 {
     public class CardInitializer : MonoBehaviour
     {
-        private float _showAtBeginning = 2f;
+        private float _showAtBeginning = 1.5f;
         private Button _button;
         private Card _card;
         private CardFlipper _cardFlipper;

@@ -59,7 +59,18 @@ namespace YagizEraslan.Duality
                 }
             }
 
-            CardManager.Instance.PrepareCards();
+            // Creates whether previous layout type or new layout
+            if (!PlayerPrefs.HasKey("GamePhase"))
+            {
+                PlayerPrefs.SetInt("GamePhase", 1);
+                CardManager.Instance.CreateCards();
+                Debug.Log("New layout has created!");
+            }
+            else
+            {
+                CardManager.Instance.LoadPreviousCards();
+                Debug.Log("Previous layout has loaded!");
+            }
         }
     }
 }

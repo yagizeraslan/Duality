@@ -9,9 +9,9 @@ namespace YagizEraslan.Duality
         [Header("Layout Values")]
         [SerializeField] private int x;
         [SerializeField] private int y;
-        private string _layoutType;
+        private string layoutType;
 
-        private Button _button;
+        private Button button;
 
         private void Awake()
         {
@@ -20,11 +20,13 @@ namespace YagizEraslan.Duality
 
         private void Init()
         {
-            _layoutType = $"{x}x{y}";
-            _button = GetComponent<Button>();
-            _button.onClick.AddListener(() => { Debug.Log($"{_layoutType} layout type has chosen!"); });
-            _button.onClick.AddListener(() => UIManager.Instance.ShowGameplayCanvas());
-            _button.onClick.AddListener(() => GridLayoutCreator.Instance.CreateGridLayout(x, y));
+            layoutType = $"{x}x{y}";
+
+            button = GetComponent<Button>();
+            button.onClick.AddListener(() => { Debug.Log($"{layoutType} layout type has chosen!"); });
+            button.onClick.AddListener(() => UIManager.Instance.ShowGameplayCanvas());
+            button.onClick.AddListener(() => ProgressManager.Instance.SaveLayoutType(x, y));
+            button.onClick.AddListener(() => GridLayoutCreator.Instance.CreateGridLayout(x, y));
         }
 
         private void Start()
@@ -35,7 +37,7 @@ namespace YagizEraslan.Duality
         private void SetLevelButtonTextSettings()
         {
             TextMeshProUGUI layoutText = GetComponentInChildren<TextMeshProUGUI>();
-            layoutText.text = _layoutType;
+            layoutText.text = layoutType;
             layoutText.color = Color.white;
             layoutText.fontStyle = FontStyles.Bold;
             layoutText.fontSize = 65;

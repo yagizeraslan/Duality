@@ -78,7 +78,7 @@ namespace YagizEraslan.Duality
             Debug.Log($"Score: {score}");
 
             turnsCountText.text = $"Turns: {turns}/{totalImages}";
-            timerText.text = $"Timer: {Mathf.FloorToInt(timer)}";
+            timerText.text = $"Completed in {Mathf.FloorToInt(timer)} seconds";
             scoreText.text = $"Score: {score}";
         }
     }

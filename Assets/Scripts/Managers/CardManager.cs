@@ -27,6 +27,7 @@ namespace YagizEraslan.Duality
         [SerializeField] private TextMeshProUGUI _timerText;
 
         private List<GameObject> cards = new List<GameObject>();
+        private List<int> inactiveCards = new List<int>();
         public List<Sprite> cardImages = new List<Sprite>();
         private List<Transform> cardTransforms = new List<Transform>();
 
@@ -50,11 +51,15 @@ namespace YagizEraslan.Duality
             {
                 yield return new WaitForSeconds(1f);
                 timer++;
+                PlayerPrefs.SetInt("Timer", timer);
                 _timerText.text = $"Timer: {timer}"; // Update the timer text
             }
         }
 
-        public void PrepareCards()
+        #region New Game Selection Functions
+        
+        // New game selection
+        public void CreateCards()
         {
             InitiliazeStartingValues();
             CollectAllSpawnedCards();
@@ -65,6 +70,7 @@ namespace YagizEraslan.Duality
             StartCoroutine(StartTimer());
         }
 
+        // Initialize the starting values of the game
         private void InitiliazeStartingValues()
         {
             firstPick = false;
@@ -78,7 +84,35 @@ namespace YagizEraslan.Duality
             _matchesText.text = $"Matches: {matches}";
         }
 
+        #endregion
 
+        #region Resume Game Selection Functions
+        // Resume game selection
+        public void LoadPreviousCards()
+        {
+            LoadInitializeStartingValues();
+            CollectAllSpawnedCards();
+            AddListenersToCards();
+            GetCardsTransforms();
+            LoadCardsdShuffledTransforms();
+            SetFrontSideImagesOfCards();
+            SetMatchedCardsInactivities();
+            StartCoroutine(StartTimer());
+        }
+
+        public void LoadInitializeStartingValues()
+        {
+            firstPick = false;
+            secondPick = false;
+            gameOver = false;
+            turns = PlayerPrefs.GetInt("Turns");
+            matches = PlayerPrefs.GetInt("Matches");
+            timer = PlayerPrefs.GetInt("Timer");
+            _timerText.text = $"Timer: {timer}";
+            _turnsText.text = $"Turns: {turns}";
+            _matchesText.text = $"Matches: {matches}";
+        }
+        #endregion
 
         private void CollectAllSpawnedCards()
         {
@@ -120,6 +154,7 @@ namespace YagizEraslan.Duality
         IEnumerator CheckMatch()
         {
             turns++;
+            PlayerPrefs.SetInt("Turns", turns);
             _turnsText.text = $"Turns: {turns}";
             Debug.Log("Turns: " + turns);
 
@@ -130,8 +165,26 @@ namespace YagizEraslan.Duality
                 Debug.Log("Match!");
                 matches++;
                 _matchesText.text = $"Matches: {matches}";
-                cards[firstPickIndex].SetActive(false);
-                cards[secondPickIndex].SetActive(false);
+                PlayerPrefs.SetInt("Matches", matches);
+
+                SaveMatchedCard(firstPickIndex);
+                SaveMatchedCard(secondPickIndex);
+
+                if (cards.Count / 2 == matches)
+                {
+                    cards[firstPickIndex].GetComponent<Button>().interactable = false;
+                    cards[secondPickIndex].GetComponent<Button>().interactable = false;
+                    StartCoroutine(FadeOutCard(cards[firstPickIndex].GetComponent<Image>(), 0f));
+                    StartCoroutine(FadeOutCard(cards[secondPickIndex].GetComponent<Image>(), 0f));
+                }
+                else
+                {
+                    cards[firstPickIndex].GetComponent<Button>().interactable = false;
+                    cards[secondPickIndex].GetComponent<Button>().interactable = false;
+                    StartCoroutine(FadeOutCard(cards[firstPickIndex].GetComponent<Image>(), 0.5f));
+                    StartCoroutine(FadeOutCard(cards[secondPickIndex].GetComponent<Image>(), 0.5f));
+                }
+
                 _audioSource.PlayOneShot(_cardMatchClip);
 
                 if (matches == cards.Count / 2)
@@ -139,9 +192,10 @@ namespace YagizEraslan.Duality
                     Debug.Log("Game Over!");
                     gameOver = true;
                     _audioSource.PlayOneShot(_gameOverClip);
-                    UIManager.Instance.ShowLevelCompletedCanvas();
                     ScoreManager.Instance.CalculateScore(matches, turns, timer);
+                    ProgressManager.Instance.ClearProgress();
                     RemoveAllCards();
+                    UIManager.Instance.ShowLevelCompletedCanvas();
                 }
             }
             else
@@ -156,11 +210,29 @@ namespace YagizEraslan.Duality
             secondPick = false;
         }
 
-        public int GetTurns() { return turns; }            
-        public int GetMatches() { return matches; }            
-        public int GetTimer(){ return timer; }
+        public int GetTurns() { return turns; }
+        public int GetMatches() { return matches; }
+        public int GetTimer() { return timer; }
         public int TotalCards() { return cards.Count; }
 
+        // Fade out the card image when a match is found
+        private IEnumerator FadeOutCard(Image cardImage, float duration)
+        {
+            float elapsedTime = 0f;
+            Color startColor = cardImage.color;
+            Color endColor = new Color(1, 1, 1, 0);
+
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                cardImage.color = Color.Lerp(startColor, endColor, elapsedTime / duration);
+                yield return null;
+            }
+
+            cardImage.color = endColor;
+        }
+
+        // Get the transforms of the cards
         private void GetCardsTransforms()
         {
             for (int i = 0; i < cards.Count; i++)
@@ -169,6 +241,7 @@ namespace YagizEraslan.Duality
             }
         }
 
+        // Set the front side images of the cards
         private void SetFrontSideImagesOfCards()
         {
             for (int i = 0; i < cards.Count; i++)
@@ -178,6 +251,7 @@ namespace YagizEraslan.Duality
             Debug.Log("Number of card images: " + cards.Count / 2);
         }
 
+        // Remove all cards from the scene
         private void RemoveAllCards()
         {
             for (int i = 0; i < cards.Count; i++)
@@ -187,6 +261,7 @@ namespace YagizEraslan.Duality
             cards.Clear();
         }
 
+        // Shuffle the transforms of the cards
         private void ShufleCardsTransforms()
         {
             // Create a list of indices to track which transforms have been swapped
@@ -225,8 +300,77 @@ namespace YagizEraslan.Duality
                 cardTransforms[i].localScale = originalScales[indices[i]];
             }
 
+            SaveCardsShuffledTransforms();
+
             // Clear the list of card transforms
             cardTransforms.Clear();
+        }
+
+        private void SaveCardsShuffledTransforms()
+        {
+            for (int i = 0; i < cardTransforms.Count; i++)
+            {
+                PlayerPrefs.SetString($"Card_{i}_AnchoredPosition_{i}", SerializeVector2(cardTransforms[i].GetComponent<RectTransform>().anchoredPosition));
+            }
+            PlayerPrefs.SetInt("CardCount", cardTransforms.Count);
+            Debug.Log("Card count: " + cardTransforms.Count);
+            PlayerPrefs.Save();
+        }
+
+        private void LoadCardsdShuffledTransforms()
+        {
+            int count = PlayerPrefs.GetInt("CardCount");
+            for (int i = 0; i < count; i++)
+            {
+                cardTransforms[i].GetComponent<RectTransform>().anchoredPosition = DeserializeVector2(PlayerPrefs.GetString($"Card_{i}_AnchoredPosition_{i}"));
+            }
+        }
+
+        public void ReadShuffledTransforms()
+        {
+            int count = PlayerPrefs.GetInt("CardCount");
+            for (int i = 0; i < count; i++)
+            {
+                string vectorString = PlayerPrefs.GetString($"Card_{i}_AnchoredPosition_{i}");
+                Debug.Log($"Card_{i}_AnchoredPosition_{i}: {vectorString}");
+            }
+        }
+
+        #region Serialization Functions
+        private string SerializeVector2(Vector2 vector)
+        {
+            return vector.x + "," + vector.y;
+        }
+
+        private Vector2 DeserializeVector2(string vectorString)
+        {
+            string[] values = vectorString.Split(',');
+            return new Vector2(float.Parse(values[0]), float.Parse(values[1]));
+        }
+        #endregion
+
+        // Save matched card index
+        private void SaveMatchedCard(int cardIndex)
+        {
+            string matchedCards = PlayerPrefs.GetString("MatchedCards", "");
+            matchedCards += cardIndex.ToString() + ",";
+            PlayerPrefs.SetString("MatchedCards", matchedCards);
+        }
+
+        // Set matched cards as inactive based on saved data
+        private void SetMatchedCardsInactivities()
+        {
+            string matchedCards = PlayerPrefs.GetString("MatchedCards", "");
+            if (!string.IsNullOrEmpty(matchedCards))
+            {
+                string[] matchedCardIndices = matchedCards.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries);
+                foreach (string cardIndexStr in matchedCardIndices)
+                {
+                    int cardIndex = int.Parse(cardIndexStr);
+                    cards[cardIndex].GetComponent<Button>().interactable = false;
+                    cards[cardIndex].GetComponent<Image>().color = new Color(1, 1, 1, 0); // Hide the card image
+                }
+            }
         }
     }
 }
