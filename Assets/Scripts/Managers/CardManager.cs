@@ -15,11 +15,16 @@ namespace YagizEraslan.Duality
         private int firstPickIndex;
         private int secondPickIndex;
 
-        private int turns = 0;
-        private int matches = 0;
+        private int turns;
+        private int matches;
+
+        private int timer;
+
+        private bool gameOver;
 
         [SerializeField] private TextMeshProUGUI _turnsText;
         [SerializeField] private TextMeshProUGUI _matchesText;
+        [SerializeField] private TextMeshProUGUI _timerText;
 
         private List<GameObject> cards = new List<GameObject>();
         public List<Sprite> cardImages = new List<Sprite>();
@@ -37,6 +42,18 @@ namespace YagizEraslan.Duality
             _audioSource = GetComponent<AudioSource>();
         }
 
+        private IEnumerator StartTimer()
+        {
+            yield return new WaitForSeconds(4f);
+
+            while (!gameOver)
+            {
+                yield return new WaitForSeconds(1f);
+                timer++;
+                _timerText.text = $"Timer: {timer}"; // Update the timer text
+            }
+        }
+
         public void PrepareCards()
         {
             InitiliazeStartingValues();
@@ -45,17 +62,23 @@ namespace YagizEraslan.Duality
             GetCardsTransforms();
             ShufleCardsTransforms();
             SetFrontSideImagesOfCards();
+            StartCoroutine(StartTimer());
         }
 
         private void InitiliazeStartingValues()
         {
             firstPick = false;
             secondPick = false;
+            gameOver = false;
             turns = 0;
             matches = 0;
+            timer = 0;
+            _timerText.text = $"Timer: {timer}";
             _turnsText.text = $"Turns: {turns}";
             _matchesText.text = $"Matches: {matches}";
         }
+
+
 
         private void CollectAllSpawnedCards()
         {
@@ -114,9 +137,11 @@ namespace YagizEraslan.Duality
                 if (matches == cards.Count / 2)
                 {
                     Debug.Log("Game Over!");
+                    gameOver = true;
                     _audioSource.PlayOneShot(_gameOverClip);
-                    RemoveAllCards();
                     UIManager.Instance.ShowLevelCompletedCanvas();
+                    ScoreManager.Instance.CalculateScore(matches, turns, timer);
+                    RemoveAllCards();
                 }
             }
             else
@@ -130,6 +155,11 @@ namespace YagizEraslan.Duality
             firstPick = false;
             secondPick = false;
         }
+
+        public int GetTurns() { return turns; }            
+        public int GetMatches() { return matches; }            
+        public int GetTimer(){ return timer; }
+        public int TotalCards() { return cards.Count; }
 
         private void GetCardsTransforms()
         {
@@ -156,7 +186,6 @@ namespace YagizEraslan.Duality
             }
             cards.Clear();
         }
-
 
         private void ShufleCardsTransforms()
         {
@@ -198,14 +227,6 @@ namespace YagizEraslan.Duality
 
             // Clear the list of card transforms
             cardTransforms.Clear();
-        }
-
-        List<Sprite> GetCardImages(int count)
-        {
-            // Load or generate card images based on the count
-            List<Sprite> images = new List<Sprite>();
-            // Add your sprites to the list here
-            return images;
         }
     }
 }
