@@ -9,11 +9,7 @@ namespace YagizEraslan.Duality
 {
     public class CardManager : MonoSingleton<CardManager>
     {
-        private bool firstPick;
-        private bool secondPick;
-
-        private int firstPickIndex;
-        private int secondPickIndex;
+        private List<int> pickedCardIndices = new List<int>();
 
         private int turns;
         private int matches;
@@ -57,7 +53,7 @@ namespace YagizEraslan.Duality
         }
 
         #region New Game Selection Functions
-        
+
         // New game selection
         public void CreateCards()
         {
@@ -73,8 +69,7 @@ namespace YagizEraslan.Duality
         // Initialize the starting values of the game
         private void InitiliazeStartingValues()
         {
-            firstPick = false;
-            secondPick = false;
+            pickedCardIndices.Clear();
             gameOver = false;
             turns = 0;
             matches = 0;
@@ -102,8 +97,7 @@ namespace YagizEraslan.Duality
 
         public void LoadInitializeStartingValues()
         {
-            firstPick = false;
-            secondPick = false;
+            pickedCardIndices.Clear();
             gameOver = false;
             turns = PlayerPrefs.GetInt("Turns");
             matches = PlayerPrefs.GetInt("Matches");
@@ -128,30 +122,28 @@ namespace YagizEraslan.Duality
         {
             for (int i = 0; i < cards.Count; i++)
             {
-                cards[i].GetComponent<Button>().onClick.AddListener(() => PickACard());
+                int index = i;
+                cards[i].GetComponent<Button>().onClick.AddListener(() => PickACard(index));
             }
         }
 
-        private void PickACard()
+        private void PickACard(int cardIndex)
         {
-            string cardName = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name;
-            Debug.Log("Card picked: " + UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name);
-
-            if (!firstPick)
+            if (pickedCardIndices.Contains(cardIndex) || cards[cardIndex].GetComponent<Button>().interactable == false)
             {
-                firstPick = true;
-                firstPickIndex = int.Parse(cardName);
-
+                return;
             }
-            else if (!secondPick)
+
+            pickedCardIndices.Add(cardIndex);
+
+            if (pickedCardIndices.Count == 2)
             {
-                secondPick = true;
-                secondPickIndex = int.Parse(cardName);
-                StartCoroutine(CheckMatch());
+                StartCoroutine(CheckMatch(pickedCardIndices[0], pickedCardIndices[1]));
+                pickedCardIndices.Clear();
             }
         }
 
-        IEnumerator CheckMatch()
+        IEnumerator CheckMatch(int firstPickIndex, int secondPickIndex)
         {
             turns++;
             PlayerPrefs.SetInt("Turns", turns);
@@ -205,9 +197,6 @@ namespace YagizEraslan.Duality
                 cards[secondPickIndex].GetComponent<CardFlipper>().FlipCard();
                 _audioSource.PlayOneShot(_cardNoMatchClip);
             }
-
-            firstPick = false;
-            secondPick = false;
         }
 
         public int GetTurns() { return turns; }
